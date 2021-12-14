@@ -2,18 +2,18 @@ const hre = require("hardhat");
 
 async function main() {
   const ItemManager = await hre.ethers.getContractFactory("ItemManager");
-  const ItemManagerContract = await ItemManager.deploy("Hello, Hardhat!");
+  const ItemManagerContract = await ItemManager.deploy();
 
   await ItemManagerContract.deployed();
 
   console.log("ItemManagerContract deployed to:", ItemManagerContract.address);
 
-  const Item = await hre.ethers.getContractFactory("Item");
-  const ItemContract = await Item.deploy("Hello, Hardhat!");
+  // const Item = await hre.ethers.getContractFactory("Item");
+  // const ItemContract = await Item.deploy("Pencil", 1000, 0);
 
-  await ItemContract.deployed();
+  // await ItemContract.deployed();
 
-  console.log("ItemContract deployed to:", ItemContract.address);
+  // console.log("ItemContract deployed to:", ItemContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
