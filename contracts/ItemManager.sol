@@ -31,6 +31,10 @@ contract ItemManager is Ownable {
     emit SupplyChainStep(itemIndex, uint(items[itemIndex]._state), address(item));
   }
 
+  function getFirstItem() public returns (S_item memory item) {
+    return items[0];
+  }
+
   function triggerPayment(uint _itemIndex) public payable  {
     require(items[_itemIndex]._itemPrice == msg.value, "Only fully payment accepted");
     require(items[_itemIndex]._state == SupplyChainState.Created, "Item is further in the supply chain" );

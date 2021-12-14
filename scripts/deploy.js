@@ -8,12 +8,12 @@ async function main() {
 
   console.log("ItemManagerContract deployed to:", ItemManagerContract.address);
 
-  const Item = await hre.ethers.getContractFactory("Item");
-  const ItemContract = await Item.deploy(ItemManagerContract.address, 1000, 0);
+  // const Item = await hre.ethers.getContractFactory("Item");
+  // const ItemContract = await Item.deploy(ItemManagerContract.address, 1000, 0);
 
-  await ItemContract.deployed();
+  // await ItemContract.deployed();
 
-  console.log("ItemContract deployed to:", ItemContract.address);
+  // console.log("ItemContract deployed to:", ItemContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

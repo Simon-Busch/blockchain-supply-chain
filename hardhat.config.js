@@ -29,6 +29,6 @@ module.exports = {
     rinkeby: {
       url: process.env.URL_INFURA,
       accounts:[process.env.ACCOUNT_PRIVATE]
-    }
+    },
   }
 };

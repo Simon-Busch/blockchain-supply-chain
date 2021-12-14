@@ -8,11 +8,16 @@ import "./App.css";
 const App = () =>  {
   const [currentAccount, setCurrentAccount ] = useState(null);
   const [itemManagerContract, setItemManagerContract] = useState(null);
-  const [itemContract, setItemContract ] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const ITEMMANAGER_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  const ITEM_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+  const [ isLoading, setIsLoading] = useState(true);
+  const [costInWei, setCostInWei ] = useState(0);
+  const [itemName, setItemName ] = useState("");
+  const [currentItem, setCurrentItem ] = useState({
+    id: null,
+    step: null,
+    address: null
+  })
+  const ITEMMANAGER_CONTRACT_ADDRESS = "0xF1e396B9528EfBCE40Db6Ba0962EbcdF947Cb590";
+  // const ITEM_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
 	const checkIfWalletIsConnected = async () => {
 		try {
@@ -31,6 +36,7 @@ const App = () =>  {
         const rinkebyChainId = "0x4"; 
         if (chainId !== rinkebyChainId) {
           alert("You are not connected to the Rinkeby Test Network!");
+          setIsLoading(false);
           return;
         }
 
@@ -41,12 +47,15 @@ const App = () =>  {
 					console.log('Found an authorized account:', account);
           // toast.success('Connected!')
 					setCurrentAccount(account);
+          setIsLoading(false);
 				} else {
 					console.log('No authorized account found');
+          setIsLoading(false);
 				}
 			}
 		} catch (error) {
 			console.log(error);
+      setIsLoading(false);
 		}
 	};
 
@@ -66,8 +75,10 @@ const App = () =>  {
       // toast.success('Connection established!')
 			console.log('Connected', accounts[0]);
 			setCurrentAccount(accounts[0]);
+      setIsLoading(false);
 		} catch (error) {
 			console.log(error);
+      setIsLoading(false);
 		}
 	};
 
@@ -84,18 +95,65 @@ const App = () =>  {
 			const signer = provider.getSigner();
 			const itemManagerContractEther = new ethers.Contract(ITEMMANAGER_CONTRACT_ADDRESS, ItemManagerContract.abi, signer);
 			setItemManagerContract(itemManagerContractEther);
-
-      const itemContractEther = new ethers.Contract(ITEM_CONTRACT_ADDRESS, ItemContract.abi, signer);
-			setItemContract(itemContractEther);
+      itemManagerContractEther.on('SupplyChainStep', (index, step, address) => {
+        console.log("listing ...")
+      } )
+      setIsLoading(false);
 		} else {
 			console.log('Ethereum object not found');
+      setIsLoading(false);
 		}
 	}, []);
 
+  const handlerSubmit = async () => {
+    if (costInWei > 0 && itemName !== "" ) {
+      try {
+        const newItem = await itemManagerContract.createItem(itemName, costInWei);
+        console.log('mining ....' , newItem);
+        await newItem.wait();
+        console.log('Mined' , newItem.hash);
+        itemManagerContract.on('SupplyChainStep', (index, step, address) => {
+          console.log(index.toNumber(), step.toNumber(), address)
+          alert("Send "+costInWei+" Wei to "+address);
+          setCurrentItem({
+            id: index.toNumber(),
+            step: step.toNumber(),
+            address
+          })
+        } )
+        setIsLoading(false);
+      } catch(err) {
+        console.log(err);
+      }
+    }
+  }
+
+  console.log(currentItem);
 
   return (
     <>
-      <h2>hello</h2>
+      <header className="App-header">
+      <h2>Re-think your supply-chain</h2>
+        {
+          currentAccount === null ? 
+          <button onClick={connectWalletAction}>Get connected</button>
+          : ''
+        }
+        <input
+          type={"number"} 
+          placeholder={"Enter the cost in wei"}
+          value={costInWei}
+          onChange={(event) => setCostInWei(event.target.value)}
+          className="inputs-form"
+        />
+        <input 
+          placeholder={"Enter itemName"}
+          value={itemName}
+          onChange={(event) => setItemName(event.target.value)}
+          className="inputs-form"
+        />
+        <button onClick={handlerSubmit} className="button">Create Item</button>
+      </header>
     </>
   );
 }

@@ -24,6 +24,38 @@
   color: white;
 }
 
+.inputs-form {
+  margin-bottom: 2rem;
+  border:0;
+  background-color: transparent;
+  padding: .4rem .6rem;
+  border: 1px solid orange;
+  color:white;
+  border-radius: 4px;
+}
+
+.button {
+  background-color: rgb(68, 66, 63);
+  border: none;
+  padding: .4rem .6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color:white;
+}
+
+.button:hover {
+  background-color: ORANGE;
+  cursor: pointer;
+}
+
+.inputs-form:focus {
+  outline: none;
+}
+
+.App-header {
+  font-size: 16px;
+}
+
 .App-link {
   color: #61dafb;
 }
